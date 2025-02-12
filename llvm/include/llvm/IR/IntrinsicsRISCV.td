@@ -1904,3 +1904,63 @@ let TargetPrefix = "riscv" in {
 include "llvm/IR/IntrinsicsRISCVXTHead.td"
 include "llvm/IR/IntrinsicsRISCVXsf.td"
 include "llvm/IR/IntrinsicsRISCVXCV.td"
+
+//===----------------------------------------------------------------------===//
+// Custom extensions
+
+// "Xint" Interval arithmetic
+let TargetPrefix = "riscv" in {
+  // Intrinsic base classes
+  // TODO: Add "Commutative" intrinsic property (?)
+  class XintArithIntrinsicBase<LLVMType ty>
+      : Intrinsic<[ty],
+                  [ty, ty],
+                  [IntrNoMem, IntrWillReturn, IntrSpeculatable]>;
+
+  class XintStatsIntrinsicBase<LLVMType ty>
+      : Intrinsic<[ty],
+                  [ty],
+                  [IntrNoMem, IntrWillReturn, IntrSpeculatable]>;
+
+  // TODO: Add "Commutative" intrinsic property (?)
+  class XintTempIntrinsicBase<LLVMType ty>
+      : Intrinsic<[llvm_i1_ty],
+                  [ty, ty],
+                  [IntrNoMem, IntrWillReturn, IntrSpeculatable]>;
+
+  // Intrinsic multiclasses
+  multiclass XintArithIntrinsic {
+    def "int_riscv_" # NAME # "_h" : XintArithIntrinsicBase<llvm_float_ty>;
+    def "int_riscv_" # NAME # "_s" : XintArithIntrinsicBase<llvm_double_ty>;
+  }
+                                
+  multiclass XintStatsIntrinsic {
+    def "int_riscv_" # NAME # "_h" : XintStatsIntrinsicBase<llvm_float_ty>;
+    def "int_riscv_" # NAME # "_s" : XintStatsIntrinsicBase<llvm_double_ty>;
+  }
+
+  multiclass XintTempIntrinsic {
+    def "int_riscv_" # NAME # "_h" : XintTempIntrinsicBase<llvm_float_ty>;
+    def "int_riscv_" # NAME # "_s" : XintTempIntrinsicBase<llvm_double_ty>;
+  }
+
+  // Intrinsic definitions
+  defm intadd : XintArithInstrinsic;
+  defm intsub : XintArithInstrinsic;
+  defm intmul : XintArithInstrinsic;
+  defm intdiv : XintArithInstrinsic;
+
+  defm intmid : XintStatsInstrinsic;
+  defm intwdt : XintStatsInstrinsic;
+  defm intrad : XintStatsInstrinsic;
+  defm intmin : XintStatsInstrinsic;
+  defm intmax : XintStatsInstrinsic;
+
+  defm intbfr : XintTempIntrinsic;
+  defm intmts : XintTempIntrinsic;
+  defm intovr : XintTempIntrinsic;
+  defm intdur : XintTempIntrinsic;
+  defm intstr : XintTempIntrinsic;
+  defm intfin : XintTempIntrinsic;
+  defm inteql : XintTempIntrinsic;
+}

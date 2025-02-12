@@ -1271,6 +1271,58 @@ def HasVendorXwchc
                          "'Xwchc' (WCH/QingKe additional compressed opcodes)">;
 
 //===----------------------------------------------------------------------===//
+// Interval arithmetic extensions
+//===----------------------------------------------------------------------===//
+
+// Xfintf
+def FeatureCustomXfintf
+    : RISCVExtension<"xfintf", 0, 1,
+                     "'Xfintf' (Single-Precision Interval Arithmetic "
+                     "Instructions in Floating-Point Registers)",
+                     [FeatureStdExtD]>;
+
+def HasCustomXfintf : Predicate<"Subtarget->hasCustomXfintf()">,
+                    AssemblerPredicate<(all_of FeatureStdExtD),
+                    "'Xfintf' (Single-Precision Interval Arithmetic "
+                    "Instructions in Floating-Point Registers)">;
+
+// Xhintf
+def FeatureCustomXhintf
+    : RISCVExtension<"xhintf", 0, 1,
+                     "'Xhintf' (Half-Precision Interval Arithmetic "
+                     "Instructions in Floating-Point Registers)",
+                     [FeatureStdExtZfhmin]>;
+
+def HasCustomXhintf : Predicate<"Subtarget->hasCustomXhintf()">,
+                    AssemblerPredicate<(all_of FeatureStdExtZfhmin),
+                    "'Xhintf' (Single-Precision Interval Arithmetic"
+                    "Instructions in Floating-Point Registers)">;
+
+// Xfintx
+def FeatureCustomXfintx
+    : RISCVExtension<"xfintx", 0, 1,
+                     "'Xfintx' (Single-Precision Interval Arithmetic"
+                     "Instructions in General-Purpose Registers)",
+                     [FeatureStdExtZicsr]>;
+
+def HasCustomXfintx : Predicate<"Subtarget->hasCustomXfintx()">,
+                    AssemblerPredicate<(all_of FeatureStdExtZicsr),
+                    "'Xfintx' (Single-Precision Interval Arithmetic"
+                    "Instructions in General-Purpose Registers)">;
+
+// Xhintx
+def FeatureCustomXhintx
+    : RISCVExtension<"xhintx", 0, 1,
+                     "'Xhintx' (Half-Precision Interval Arithmetic"
+                     "Instructions in General-Purpose Registers)",
+                     [FeatureStdExtZicsr]>;
+
+def HasXCustomXhintx : Predicate<"Subtarget->hasCustomXhintx()">,
+                    AssemblerPredicate<(all_of FeatureStdExtZicsr),
+                    "'Xhintx' (Half-Precision Interval Arithmetic"
+                    "Instructions in General-Purpose Registers)">;
+
+//===----------------------------------------------------------------------===//
 // LLVM specific features and extensions
 //===----------------------------------------------------------------------===//
 
