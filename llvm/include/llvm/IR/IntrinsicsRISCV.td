@@ -1945,16 +1945,16 @@ let TargetPrefix = "riscv" in {
   }
 
   // Intrinsic definitions
-  defm intadd : XintArithInstrinsic;
-  defm intsub : XintArithInstrinsic;
-  defm intmul : XintArithInstrinsic;
-  defm intdiv : XintArithInstrinsic;
+  defm intadd : XintArithIntrinsic;
+  defm intsub : XintArithIntrinsic;
+  defm intmul : XintArithIntrinsic;
+  defm intdiv : XintArithIntrinsic;
 
-  defm intmid : XintStatsInstrinsic;
-  defm intwdt : XintStatsInstrinsic;
-  defm intrad : XintStatsInstrinsic;
-  defm intmin : XintStatsInstrinsic;
-  defm intmax : XintStatsInstrinsic;
+  defm intmid : XintStatsIntrinsic;
+  defm intwdt : XintStatsIntrinsic;
+  defm intrad : XintStatsIntrinsic;
+  defm intmin : XintStatsIntrinsic;
+  defm intmax : XintStatsIntrinsic;
 
   defm intbfr : XintTempIntrinsic;
   defm intmts : XintTempIntrinsic;

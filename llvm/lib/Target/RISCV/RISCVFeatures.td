@@ -1317,7 +1317,7 @@ def FeatureCustomXhintx
                      "Instructions in General-Purpose Registers)",
                      [FeatureStdExtZicsr]>;
 
-def HasXCustomXhintx : Predicate<"Subtarget->hasCustomXhintx()">,
+def HasCustomXhintx : Predicate<"Subtarget->hasCustomXhintx()">,
                     AssemblerPredicate<(all_of FeatureStdExtZicsr),
                     "'Xhintx' (Half-Precision Interval Arithmetic"
                     "Instructions in General-Purpose Registers)">;

@@ -13,43 +13,50 @@ def FmtFieldS : FmtField<0b01, ".s">;
 let hasSideEffects = 0, mayLoad = 0, mayStore = 0, mayRaiseFPException = 1 in
 class XintArithInstBase<bits<5> funct5, FmtField fmt, string opcodestr,
                         DAGOperand rty, bit Commutable = 0>
-    : RVInstRFrm<{ funct5, fmt.Value }, OPC_CUSTOM_0, (outs rty:$rd),
+    : RVInstRFrm<!or(!shl(funct5, 2), fmt.Value), OPC_CUSTOM_0, (outs rty:$rd),
                  (ins rty:$rs1, rty:$rs2, frmarg:$frm),
                  !strconcat(opcodestr, fmt.Suffix), "$rd, $rs1, $rs2$frm"> {
   let isCommutable = Commutable;
-};
+}
 
 let hasSideEffects = 0, mayLoad = 0, mayStore = 0, mayRaiseFPException = 1 in
-multiclass XintStatsInstBase<bits<5> funct5, FmtField fmt, string opcodestr,
+class XintStatsInstBase<bits<5> funct5, FmtField fmt, string opcodestr,
                              DAGOperand rty>
-         : RVInstRFrm<{ funct5, fmt }, OPC_CUSTOM_0, (outs rty:$rd),
-                      (ins rty:$rs1, frmarg:$frm), opcodestr, "$rd, $rs1$frm">;
+         : RVInstRFrm<!or(!shl(funct5, 2), fmt.Value), OPC_CUSTOM_0,
+                      (outs rty:$rd), (ins rty:$rs1, frmarg:$frm), opcodestr,
+                      "$rd, $rs1$frm"> {
+  let rs2 = 0;
+}
 
 let hasSideEffects = 0, mayLoad = 0, mayStore = 0, mayRaiseFPException = 1,
     IsSignExtendingOpW = 1 in
-multiclass XintTempInstBase<bits<5> funct5, bits<2> fmt, string opcodestr,
-                            DAGOperand rty bit Commutable = 0>
-         : RVInstR<{ funct5, fmt }, 0b000, OPC_CUSTOM_0, (outs GPR:$rd),
-                   (ins rty:$rs1, rty:$rs2), opcodestr, "$rd, $rs1, $rs2"> {
+class XintTempInstBase<bits<5> funct5, FmtField fmt, string opcodestr,
+                            DAGOperand rty, bit Commutable = 0>
+         : RVInstR<!or(!shl(funct5, 2), fmt.Value), 0b000, OPC_CUSTOM_0,
+                       (outs GPR:$rd), (ins rty:$rs1, rty:$rs2), opcodestr,
+                       "$rd, $rs1, $rs2"> {
   let isCommutable = Commutable;
 }
+
 //===----------------------------------------------------------------------===//
 // Instruction multiclasses 
 //===----------------------------------------------------------------------===//
 
-multiclass XintArithInst<bits<5> funct5, string opcodestr bit Commutable = 0> {
-  let isCommutable = Commutable {
+multiclass XintArithInst<bits<5> funct5, string opcodestr, bit Commutable = 0> {
+  let isCommutable = Commutable in {
     let Predicates = [HasCustomXhintf] in
     def _H_FPR : XintArithInstBase<funct5, FmtFieldH, opcodestr, FPR32>;
 
     let Predicates = [HasCustomXfintf] in
     def _S_FPR : XintArithInstBase<funct5, FmtFieldS, opcodestr, FPR64>;
 
-    let Predicates = [HasCustomXhintx] in
-    def _H_GPR : XintArithInstBase<funct5, FmtFieldH, opcodestr, FPR32INX>;
+    let DecoderNamespace = "Xintx" in {
+      let Predicates = [HasCustomXhintx] in
+      def _H_GPR : XintArithInstBase<funct5, FmtFieldH, opcodestr, FPR32INX>;
 
-    let Predicates = [HasCustomXfintx, IsRV64] in
-    def _S_GPR : XintArithInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
+      let Predicates = [HasCustomXfintx, IsRV64] in
+      def _S_GPR : XintArithInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
+    }
 
     // TODO: Add register pairing for Zfintx in RV32.
   }
@@ -62,30 +69,34 @@ multiclass XintStatsInst<bits<5> funct5, string opcodestr> {
   let Predicates = [HasCustomXfintf] in
   def _S_FPR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR64>;
 
-  let Predicates = [HasCustomXhintx] in
-  def _H_GPR : XintStatsInstBase<funct5, FmtFieldH, opcodestr, FPR32INX>;
+  let DecoderNamespace = "Xintx" in {
+    let Predicates = [HasCustomXhintx] in
+    def _H_GPR : XintStatsInstBase<funct5, FmtFieldH, opcodestr, FPR32INX>;
 
-  let Predicates = [HasCustomXfintx, IsRV64] in
-  def _S_GPR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
+    let Predicates = [HasCustomXfintx, IsRV64] in
+    def _S_GPR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
+  }
 
   // TODO: Add register pairing for Zfintx in RV32.
 }
 
-multiclass XintTempInst<bits<5> funct5, string opcodestr bit Commutable = 0> {
-  let isCommutable = Commutable {
+multiclass XintTempInst<bits<5> funct5, string opcodestr, bit Commutable = 0> {
+  let isCommutable = Commutable in {
     let Predicates = [HasCustomXhintf] in
     def _H_FPR : XintTempInstBase<funct5, FmtFieldH, opcodestr, FPR32>;
 
     let Predicates = [HasCustomXfintf] in
     def _S_FPR : XintTempInstBase<funct5, FmtFieldS, opcodestr, FPR64>;
 
-    let Predicates = [HasCustomXhintx] in
-    def _H_GPR : XintTempInstBase<funct5, FmtFieldH, opcodestr, FPR32INX>;
+    let DecoderNamespace = "Xintx" in {
+      let Predicates = [HasCustomXhintx] in
+      def _H_GPR : XintTempInstBase<funct5, FmtFieldH, opcodestr, FPR32INX>;
 
-    let Predicates = [HasCustomXfintx, IsRV64] in
-    def _S_GPR : XintTempInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
+      let Predicates = [HasCustomXfintx, IsRV64] in
+      def _S_GPR : XintTempInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
+    }
 
-  // TODO: Add register pairing for Zfintx in RV32.
+    // TODO: Add register pairing for Zfintx in RV32.
   }
 }
 
@@ -126,5 +137,3 @@ defm INTEQL : XintTempInst<0b10110, "inteql", Commutable = 1>;
 
 //def : Pat<(int_riscv_intadd_s FPR64:$rs1, FPR64:$rs2),
 //          (INTADD_S FPR64:$rs1, FPR64:$rs2)>;
-
-
