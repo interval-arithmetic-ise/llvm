@@ -53,9 +53,9 @@ intmts.h t4, ft5, ft6
 # CHECK-ASM-AND-OBJ: intovr.h t6, ft8, ft9
 # CHECK-ASM: encoding: [0x8b,0x0f,0xde,0x91]
 intovr.h t6, ft8, ft9
-# CHECK-ASM-AND-OBJ: intdur.h t2, ft11, fa1
-# CHECK-ASM: encoding: [0x8b,0x83,0xbf,0x98]
-intdur.h t2, ft11,fa1
+# CHECK-ASM-AND-OBJ: intdur.h t2, ft1, fa1
+# CHECK-ASM: encoding: [0x8b,0x83,0xb0,0x98]
+intdur.h t2, ft1, fa1
 # CHECK-ASM-AND-OBJ: intstr.h a2, fa3, fa5
 # CHECK-ASM: encoding: [0x0b,0x86,0xf6,0xa0]
 intstr.h a2, fa3, fa5

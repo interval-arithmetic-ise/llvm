@@ -53,9 +53,9 @@ intmts.s t4, ft5, ft6
 # CHECK-ASM-AND-OBJ: intovr.s t6, ft8, ft9
 # CHECK-ASM: encoding: [0x8b,0x0f,0xde,0x93]
 intovr.s t6, ft8, ft9
-# CHECK-ASM-AND-OBJ: intdur.s t2, ft11, fa1
-# CHECK-ASM: encoding: [0x8b,0x83,0xbf,0x9a]
-intdur.s t2, ft11,fa1
+# CHECK-ASM-AND-OBJ: intdur.s t2, ft1, fa1
+# CHECK-ASM: encoding: [0x8b,0x83,0xb0,0x9a]
+intdur.s t2, ft1, fa1
 # CHECK-ASM-AND-OBJ: intstr.s a2, fa3, fa5
 # CHECK-ASM: encoding: [0x0b,0x86,0xf6,0xa2]
 intstr.s a2, fa3, fa5
