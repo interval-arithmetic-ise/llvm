@@ -11,48 +11,57 @@
 
 # Arithmetic instructions
 
-# CHECK-ASM-AND-OBJ: intadd.s fa0, fa1, fa2
-# CHECK-ASM: encoding: [0x43,0xf5,0xc5,0x68]
+# CHECK-ASM-AND-OBJ: intadd.s fa0, fa1, fa2, dyn
+# CHECK-ASM: encoding: [0x0b,0xf5,0xc5,0x02]
 intadd.s fa0, fa1, fa2
-# CHECK-ASM-AND-OBJ: intsub.s fa0, fa1, fa2
-# CHECK-ASM: encoding: [0x43,0xf5,0xc5,0x68]
+# CHECK-ASM-AND-OBJ: intsub.s fa3, fa4, fa5, dyn
+# CHECK-ASM: encoding: [0x8b,0x76,0xf7,0x0a]
 intsub.s fa3, fa4, fa5
-# CHECK-ASM-AND-OBJ: intmul.s fa0, fa1, fa2
-# CHECK-ASM: encoding: [0x43,0xf5,0xc5,0x68]
+# CHECK-ASM-AND-OBJ: intmul.s fa6, fa7, fa0, dyn
+# CHECK-ASM: encoding: [0x0b,0xf8,0xa8,0x12]
 intmul.s fa6, fa7, fa0
-# CHECK-ASM-AND-OBJ: intdiv.s fa0, fa1, fa2
-# CHECK-ASM: encoding: [0x43,0xf5,0xc5,0x68]
+# CHECK-ASM-AND-OBJ: intdiv.s fa1, fa2, fa3, dyn
+# CHECK-ASM: encoding: [0x8b,0x75,0xd6,0x1a]
 intdiv.s fa1, fa2, fa3
 
 # Statistical instructions
-; intmid.s fa0, fa2
-; intwdt.s fa3, fa6
-; intrad.s fa2, fa1
-; intmin.s fa7, fa4
-; intmax.s fa3, fa6
+
+# CHECK-ASM-AND-OBJ: intmid.s fa0, fa2, dyn
+# CHECK-ASM: encoding: [0x0b,0x75,0x06,0x42]
+intmid.s fa0, fa2
+# CHECK-ASM-AND-OBJ: intwdt.s fa3, fa6, dyn
+# CHECK-ASM: encoding: [0x8b,0x76,0x08,0x4a]
+intwdt.s fa3, fa6
+# CHECK-ASM-AND-OBJ: intrad.s fa2, fa1, dyn
+# CHECK-ASM: encoding: [0x0b,0xf6,0x05,0x52]
+intrad.s fa2, fa1
+# CHECK-ASM-AND-OBJ: intmin.s fa7, fa4, dyn
+# CHECK-ASM: encoding: [0x8b,0x78,0x07,0x5a]
+intmin.s fa7, fa4
+# CHECK-ASM-AND-OBJ: intmax.s fa3, fa6, dyn
+# CHECK-ASM: encoding: [0x8b,0x76,0x08,0x62]
+intmax.s fa3, fa6
 
 # Temporal logic instructions
-; intbfr.s ft1, ft2, ft3
-; intmts.s ft4, ft5, ft6
-; intovr.s ft7, ft8, ft9
-; intdur.s ft10, ft11, fa1
-; intstr.s fa2, fa3, fa5
-; intfin.s fa5, fa6, fa7
-; inteql.s ft1, fa2, fa3
 
-; 00000 00   rs2 rs1  rm rd 0001011 INTADD.H
-; 00001 00   rs2 rs1  rm rd 0001011 INTSUB.H
-; 00010 00   rs2 rs1  rm rd 0001011 INTMUL.H
-; 00011 00   rs2 rs1  rm rd 0001011 INTDIV.H
-; 01000 00 00000 rs1  rm rd 0001011 INTMID.H
-; 01001 00 00000 rs1  rm rd 0001011 INTWDT.H
-; 01010 00 00000 rs1  rm rd 0001011 INTRAD.H
-; 01011 00 00000 rs1  rm rd 0001011 INTMIN.H
-; 01100 00 00000 rs1  rm rd 0001011 INTMAX.H
-; 10000 00   rs2 rs1 000 rd 0001011 INTBFR.H
-; 10001 00   rs2 rs1 000 rd 0001011 INTMTS.H
-; 10010 00   rs2 rs1 000 rd 0001011 INTOVR.H
-; 10011 00   rs2 rs1 000 rd 0001011 INTDUR.H
-; 10100 00   rs2 rs1 000 rd 0001011 INTSTR.H
-; 10101 00   rs2 rs1 000 rd 0001011 INTFIN.H
-; 10110 00   rs2 rs1 000 rd 0001011 INTEQL.H
+# CHECK-ASM-AND-OBJ: intbfr.s t1, ft2, ft3
+# CHECK-ASM: encoding: [0x0b,0x03,0x31,0x82]
+intbfr.s t1, ft2, ft3
+# CHECK-ASM-AND-OBJ: intmts.s t4, ft5, ft6
+# CHECK-ASM: encoding: [0x8b,0x8e,0x62,0x8a]
+intmts.s t4, ft5, ft6
+# CHECK-ASM-AND-OBJ: intovr.s t6, ft8, ft9
+# CHECK-ASM: encoding: [0x8b,0x0f,0xde,0x93]
+intovr.s t6, ft8, ft9
+# CHECK-ASM-AND-OBJ: intdur.s t2, ft11, fa1
+# CHECK-ASM: encoding: [0x8b,0x83,0xbf,0x9a]
+intdur.s t2, ft11,fa1
+# CHECK-ASM-AND-OBJ: intstr.s a2, fa3, fa5
+# CHECK-ASM: encoding: [0x0b,0x86,0xf6,0xa2]
+intstr.s a2, fa3, fa5
+# CHECK-ASM-AND-OBJ: intfin.s a5, fa6, fa7
+# CHECK-ASM: encoding: [0x8b,0x07,0x18,0xab]
+intfin.s a5, fa6, fa7
+# CHECK-ASM-AND-OBJ: inteql.s t1, fa2, fa3
+# CHECK-ASM: encoding: [0x0b,0x03,0xd6,0xb2]
+inteql.s t1, fa2, fa3

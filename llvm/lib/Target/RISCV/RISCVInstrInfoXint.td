@@ -27,19 +27,19 @@ class XintArithInstBase<bits<5> funct5, FmtField fmt, string opcodestr,
 let hasSideEffects = 0, mayLoad = 0, mayStore = 0, mayRaiseFPException = 1 in
 class XintStatsInstBase<bits<5> funct5, FmtField fmt, string opcodestr,
                              DAGOperand rty>
-         : RVInstRFrm<!or(!shl(funct5, 2), fmt.Value), OPC_CUSTOM_0,
-                      (outs rty:$rd), (ins rty:$rs1, frmarg:$frm), opcodestr,
-                      "$rd, $rs1$frm"> {
-  let rs2 = 0;
+    : RVInstRFrm<!or(!shl(funct5, 2), fmt.Value), OPC_CUSTOM_0, (outs rty:$rd),
+                 (ins rty:$rs1, frmarg:$frm), !strconcat(opcodestr, fmt.Suffix),
+                 "$rd, $rs1$frm"> {
+  let rs2 = 0b00000;
 }
 
 let hasSideEffects = 0, mayLoad = 0, mayStore = 0, mayRaiseFPException = 1,
     IsSignExtendingOpW = 1 in
 class XintTempInstBase<bits<5> funct5, FmtField fmt, string opcodestr,
                             DAGOperand rty, bit Commutable = 0>
-         : RVInstR<!or(!shl(funct5, 2), fmt.Value), 0b000, OPC_CUSTOM_0,
-                       (outs GPR:$rd), (ins rty:$rs1, rty:$rs2), opcodestr,
-                       "$rd, $rs1, $rs2"> {
+    : RVInstR<!or(!shl(funct5, 2), fmt.Value), 0b000, OPC_CUSTOM_0,
+              (outs GPR:$rd), (ins rty:$rs1, rty:$rs2),
+              !strconcat(opcodestr, fmt.Suffix), "$rd, $rs1, $rs2"> {
   let isCommutable = Commutable;
 }
 
@@ -157,16 +157,16 @@ multiclass PatXintArith<XintArithInstId Inst> {
   defvar intrin_s = !cast<SDPatternOperator>("int_riscv_"#lower#"_s");
 
   let Predicates = [HasCustomXhintf] in
-  def _H_FPR : PatXintArithBase<intrin_h, !cast<RVInst>(upper#_H_FPR), FPR32>;
+  def : PatXintArithBase<intrin_h, !cast<RVInst>(upper#"_H_FPR"), FPR32>;
 
   let Predicates = [HasCustomXfintf] in
-  def _S_FPR : PatXintArithBase<intrin_s, !cast<RVInst>(upper#_S_FPR), FPR64>;
+  def : PatXintArithBase<intrin_s, !cast<RVInst>(upper#"_S_FPR"), FPR64>;
 
   let Predicates = [HasCustomXhintx] in
-  def _H_GPR : PatXintArithBase<intrin_h, !cast<RVInst>(upper#_H_GPR), FPR32INX>;
+  def : PatXintArithBase<intrin_h, !cast<RVInst>(upper#"_H_GPR"), FPR32INX>;
 
   let Predicates = [HasCustomXfintx, IsRV64] in
-  def _S_GPR : PatXintArithBase<intrin_s, !cast<RVInst>(upper#_S_GPR), FPR64INX>;
+  def : PatXintArithBase<intrin_s, !cast<RVInst>(upper#"_S_GPR"), FPR64INX>;
 }
 
 multiclass PatXintStats<XintStatsInstId Inst> {
@@ -177,16 +177,16 @@ multiclass PatXintStats<XintStatsInstId Inst> {
   defvar intrin_s = !cast<SDPatternOperator>("int_riscv_"#lower#"_s");
 
   let Predicates = [HasCustomXhintf] in
-  def _H_FPR : PatXintStatsBase<intrin_h, !cast<RVInst>(upper#_H_FPR), FPR32>;
+  def : PatXintStatsBase<intrin_h, !cast<RVInst>(upper#"_H_FPR"), FPR32>;
 
   let Predicates = [HasCustomXfintf] in
-  def _S_FPR : PatXintStatsBase<intrin_s, !cast<RVInst>(upper#_S_FPR), FPR64>;
+  def : PatXintStatsBase<intrin_s, !cast<RVInst>(upper#"_S_FPR"), FPR64>;
 
   let Predicates = [HasCustomXhintx] in
-  def _H_GPR : PatXintStatsBase<intrin_h, !cast<RVInst>(upper#_H_GPR), FPR32INX>;
+  def : PatXintStatsBase<intrin_h, !cast<RVInst>(upper#"_H_GPR"), FPR32INX>;
 
   let Predicates = [HasCustomXfintx, IsRV64] in
-  def _S_GPR : PatXintStatsBase<intrin_s, !cast<RVInst>(upper#_S_GPR), FPR64INX>;
+  def : PatXintStatsBase<intrin_s, !cast<RVInst>(upper#"_S_GPR"), FPR64INX>;
 }
 
 multiclass PatXintTemp<XintTempInstId Inst> {
@@ -197,16 +197,16 @@ multiclass PatXintTemp<XintTempInstId Inst> {
   defvar intrin_s = !cast<SDPatternOperator>("int_riscv_"#lower#"_s");
 
   let Predicates = [HasCustomXhintf] in
-  def _H_FPR : PatXintTempBase<intrin_h, !cast<RVInst>(upper#_H_FPR), FPR32>;
+  def : PatXintTempBase<intrin_h, !cast<RVInst>(upper#"_H_FPR"), FPR32>;
 
   let Predicates = [HasCustomXfintf] in
-  def _S_FPR : PatXintTempBase<intrin_s, !cast<RVInst>(upper#_S_FPR), FPR64>;
+  def : PatXintTempBase<intrin_s, !cast<RVInst>(upper#"_S_FPR"), FPR64>;
 
   let Predicates = [HasCustomXhintx] in
-  def _H_GPR : PatXintTempBase<intrin_h, !cast<RVInst>(upper#_H_GPR), FPR32INX>;
+  def : PatXintTempBase<intrin_h, !cast<RVInst>(upper#"_H_GPR"), FPR32INX>;
 
   let Predicates = [HasCustomXfintx, IsRV64] in
-  def _S_GPR : PatXintTempBase<intrin_s, !cast<RVInst>(upper#_S_GPR), FPR64INX>;
+  def : PatXintTempBase<intrin_s, !cast<RVInst>(upper#"_S_GPR"), FPR64INX>;
 }
 
 defm : PatXintArith<INTADD>;
