@@ -51,63 +51,60 @@ multiclass XintArithInst<bits<5> funct5, string opcodestr, bit Commutable = 0> {
   def "" : XintArithInstId;
 
   let isCommutable = Commutable in {
-    let Predicates = [HasCustomXhintf] in
+    let Predicates = [HasCustomXhintf] , DecoderNamespace = "Xhintf" in
     def _H_FPR : XintArithInstBase<funct5, FmtFieldH, opcodestr, FPR32>;
 
-    let Predicates = [HasCustomXfintf] in
+    let Predicates = [HasCustomXfintf] , DecoderNamespace = "Xfintf" in
     def _S_FPR : XintArithInstBase<funct5, FmtFieldS, opcodestr, FPR64>;
 
-    let DecoderNamespace = "Xintx" in {
-      let Predicates = [HasCustomXhintx] in
-      def _H_GPR : XintArithInstBase<funct5, FmtFieldH, opcodestr, FPR32INX>;
+    let Predicates = [HasCustomXhintx], DecoderNamespace = "Xhintx" in
+    def _H_GPR : XintArithInstBase<funct5, FmtFieldH, opcodestr, FPR32INX>;
 
-      let Predicates = [HasCustomXfintx, IsRV64] in
-      def _S_GPR : XintArithInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
-    }
+    let Predicates = [HasCustomXfintx, IsRV64], DecoderNamespace = "Xfintx"  in
+    def _S_GPR : XintArithInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
 
-    // TODO: Add register pairing for Xfintx on RV32.
+    let Predicates = [HasCustomXfintx, IsRV32], DecoderNamespace = "XfintxPair" in
+    def _S_GPR_PAIR : XintArithInstBase<funct5, FmtFieldS, opcodestr, FPR64IN32X>;
   }
 }
 
 multiclass XintStatsInst<bits<5> funct5, string opcodestr> {
   def "" : XintStatsInstId;
 
-  let Predicates = [HasCustomXhintf] in
+  let Predicates = [HasCustomXhintf] , DecoderNamespace = "Xhintf" in
   def _H_FPR : XintStatsInstBase<funct5, FmtFieldH, opcodestr, FPR32>;
 
-  let Predicates = [HasCustomXfintf] in
+  let Predicates = [HasCustomXfintf] , DecoderNamespace = "Xfintf" in
   def _S_FPR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR64>;
 
-  let DecoderNamespace = "Xintx" in {
-    let Predicates = [HasCustomXhintx] in
-    def _H_GPR : XintStatsInstBase<funct5, FmtFieldH, opcodestr, FPR32INX>;
+  let Predicates = [HasCustomXhintx], DecoderNamespace = "Xhintx" in
+  def _H_GPR : XintStatsInstBase<funct5, FmtFieldH, opcodestr, FPR32INX>;
 
-    let Predicates = [HasCustomXfintx, IsRV64] in
-    def _S_GPR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
-  }
+  let Predicates = [HasCustomXfintx, IsRV64], DecoderNamespace = "Xfintx"  in
+  def _S_GPR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
 
-  // TODO: Add register pairing for Xfintx on RV32.
+  let Predicates = [HasCustomXfintx, IsRV32], DecoderNamespace = "XfintxPair" in
+  def _S_GPR_PAIR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR64IN32X>;
 }
 
 multiclass XintTempInst<bits<5> funct5, string opcodestr, bit Commutable = 0> {
   def "" : XintTempInstId;
 
   let isCommutable = Commutable in {
-    let Predicates = [HasCustomXhintf] in
+    let Predicates = [HasCustomXhintf] , DecoderNamespace = "Xhintf" in
     def _H_FPR : XintTempInstBase<funct5, FmtFieldH, opcodestr, FPR32>;
 
-    let Predicates = [HasCustomXfintf] in
+    let Predicates = [HasCustomXfintf] , DecoderNamespace = "Xfintf" in
     def _S_FPR : XintTempInstBase<funct5, FmtFieldS, opcodestr, FPR64>;
 
-    let DecoderNamespace = "Xintx" in {
-      let Predicates = [HasCustomXhintx] in
-      def _H_GPR : XintTempInstBase<funct5, FmtFieldH, opcodestr, FPR32INX>;
+    let Predicates = [HasCustomXhintx], DecoderNamespace = "Xhintx" in
+    def _H_GPR : XintTempInstBase<funct5, FmtFieldH, opcodestr, FPR32INX>;
 
-      let Predicates = [HasCustomXfintx, IsRV64] in
-      def _S_GPR : XintTempInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
-    }
+    let Predicates = [HasCustomXfintx, IsRV64], DecoderNamespace = "Xfintx"  in
+    def _S_GPR : XintTempInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
 
-    // TODO: Add register pairing for Xfintx on RV32.
+    let Predicates = [HasCustomXfintx, IsRV32], DecoderNamespace = "XfintxPair" in
+    def _S_GPR_PAIR : XintTempInstBase<funct5, FmtFieldS, opcodestr, FPR64IN32X>;
   }
 }
 
@@ -138,7 +135,7 @@ defm INTEQL : XintTempInst<0b10110, "inteql", Commutable = 1>;
 // Codegen patterns
 //===----------------------------------------------------------------------===//
 
-// TODO: Define ops with static FRM modes
+// TODO: Define ops with static FRM modes (currently they are all FRM_DYN)
 
 class PatXintArithBase<SDPatternOperator OpNode, RVInst Inst, DAGOperand Reg>
     : Pat<(OpNode Reg:$rs1, Reg:$rs2), (Inst Reg:$rs1, Reg:$rs2, FRM_DYN)>;
@@ -167,6 +164,9 @@ multiclass PatXintArith<XintArithInstId Inst> {
 
   let Predicates = [HasCustomXfintx, IsRV64] in
   def : PatXintArithBase<intrin_s, !cast<RVInst>(upper#"_S_GPR"), FPR64INX>;
+
+  let Predicates = [HasCustomXfintx, IsRV32] in
+  def : PatXintArithBase<intrin_s, !cast<RVInst>(upper#"_S_GPR_PAIR"), FPR64IN32X>;
 }
 
 multiclass PatXintStats<XintStatsInstId Inst> {
@@ -187,6 +187,9 @@ multiclass PatXintStats<XintStatsInstId Inst> {
 
   let Predicates = [HasCustomXfintx, IsRV64] in
   def : PatXintStatsBase<intrin_s, !cast<RVInst>(upper#"_S_GPR"), FPR64INX>;
+
+  let Predicates = [HasCustomXfintx, IsRV32] in
+  def : PatXintStatsBase<intrin_s, !cast<RVInst>(upper#"_S_GPR_PAIR"), FPR64IN32X>;
 }
 
 multiclass PatXintTemp<XintTempInstId Inst> {
@@ -207,6 +210,9 @@ multiclass PatXintTemp<XintTempInstId Inst> {
 
   let Predicates = [HasCustomXfintx, IsRV64] in
   def : PatXintTempBase<intrin_s, !cast<RVInst>(upper#"_S_GPR"), FPR64INX>;
+
+  let Predicates = [HasCustomXfintx, IsRV32] in
+  def : PatXintTempBase<intrin_s, !cast<RVInst>(upper#"_S_GPR_PAIR"), FPR64IN32X>;
 }
 
 defm : PatXintArith<INTADD>;

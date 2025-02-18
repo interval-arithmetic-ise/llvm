@@ -620,6 +620,18 @@ DecodeStatus RISCVDisassembler::getInstruction32(MCInst &MI, uint64_t &Size,
                         "CORE-V SIMD extensions custom opcode table");
   TRY_TO_DECODE_FEATURE(RISCV::FeatureVendorXCVbi, DecoderTableXCVbi32,
                         "CORE-V Immediate Branching custom opcode table");
+  TRY_TO_DECODE_FEATURE(RISCV::FeatureCustomXhintf, DecoderTableXhintf32,
+                        "Xhintf custom opcode table");
+  TRY_TO_DECODE_FEATURE(RISCV::FeatureCustomXfintf, DecoderTableXfintf32,
+                        "Xfintf custom opcode table");
+  TRY_TO_DECODE_FEATURE(RISCV::FeatureCustomXhintx, DecoderTableXhintx32,
+                        "Xhintx custom opcode table");
+  TRY_TO_DECODE(STI.hasFeature(RISCV::FeatureCustomXfintx) &&
+                STI.hasFeature(RISCV::Feature64Bit), DecoderTableXfintx32,
+                "Xfintx custom opcode table for RV64");
+  TRY_TO_DECODE(STI.hasFeature(RISCV::FeatureCustomXfintx) &&
+                !STI.hasFeature(RISCV::Feature64Bit), DecoderTableXfintxPair32,
+                "Xfintx custom opcode table for RV32 with register pairing");
   TRY_TO_DECODE(true, DecoderTable32, "RISCV32 table");
 
   return MCDisassembler::Fail;
