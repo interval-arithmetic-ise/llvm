@@ -10,6 +10,11 @@ def FmtFieldS : FmtField<0b01, ".s">;
 // Instruction base classes
 //===----------------------------------------------------------------------===//
 
+class XintInstId {}
+class XintArithInstId : XintInstId;
+class XintStatsInstId : XintInstId;
+class XintTempInstId : XintInstId;
+
 let hasSideEffects = 0, mayLoad = 0, mayStore = 0, mayRaiseFPException = 1 in
 class XintArithInstBase<bits<5> funct5, FmtField fmt, string opcodestr,
                         DAGOperand rty, bit Commutable = 0>
@@ -43,6 +48,8 @@ class XintTempInstBase<bits<5> funct5, FmtField fmt, string opcodestr,
 //===----------------------------------------------------------------------===//
 
 multiclass XintArithInst<bits<5> funct5, string opcodestr, bit Commutable = 0> {
+  def "" : XintArithInstId;
+
   let isCommutable = Commutable in {
     let Predicates = [HasCustomXhintf] in
     def _H_FPR : XintArithInstBase<funct5, FmtFieldH, opcodestr, FPR32>;
@@ -58,11 +65,13 @@ multiclass XintArithInst<bits<5> funct5, string opcodestr, bit Commutable = 0> {
       def _S_GPR : XintArithInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
     }
 
-    // TODO: Add register pairing for Zfintx in RV32.
+    // TODO: Add register pairing for Xfintx on RV32.
   }
 }
 
 multiclass XintStatsInst<bits<5> funct5, string opcodestr> {
+  def "" : XintStatsInstId;
+
   let Predicates = [HasCustomXhintf] in
   def _H_FPR : XintStatsInstBase<funct5, FmtFieldH, opcodestr, FPR32>;
 
@@ -77,10 +86,12 @@ multiclass XintStatsInst<bits<5> funct5, string opcodestr> {
     def _S_GPR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
   }
 
-  // TODO: Add register pairing for Zfintx in RV32.
+  // TODO: Add register pairing for Xfintx on RV32.
 }
 
 multiclass XintTempInst<bits<5> funct5, string opcodestr, bit Commutable = 0> {
+  def "" : XintTempInstId;
+
   let isCommutable = Commutable in {
     let Predicates = [HasCustomXhintf] in
     def _H_FPR : XintTempInstBase<funct5, FmtFieldH, opcodestr, FPR32>;
@@ -96,7 +107,7 @@ multiclass XintTempInst<bits<5> funct5, string opcodestr, bit Commutable = 0> {
       def _S_GPR : XintTempInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
     }
 
-    // TODO: Add register pairing for Zfintx in RV32.
+    // TODO: Add register pairing for Xfintx on RV32.
   }
 }
 
@@ -124,16 +135,95 @@ defm INTFIN : XintTempInst<0b10101, "intfin">;
 defm INTEQL : XintTempInst<0b10110, "inteql", Commutable = 1>;
 
 //===----------------------------------------------------------------------===//
-// Patterns
+// Codegen patterns
 //===----------------------------------------------------------------------===//
 
-// Xfintf
+// TODO: Define ops with static FRM modes
 
-// Xhintf
+class PatXintArithBase<SDPatternOperator OpNode, RVInst Inst, DAGOperand Reg>
+    : Pat<(OpNode Reg:$rs1, Reg:$rs2), (Inst Reg:$rs1, Reg:$rs2, FRM_DYN)>;
 
-// Xfintx
+class PatXintStatsBase<SDPatternOperator OpNode, RVInst Inst, DAGOperand Reg>
+    : Pat<(OpNode Reg:$rs1), (Inst Reg:$rs1, FRM_DYN)>;
 
-// Xhintx
+class PatXintTempBase<SDPatternOperator OpNode, RVInst Inst, DAGOperand Reg>
+    : Pat<(OpNode Reg:$rs1, Reg:$rs2), (Inst Reg:$rs1, Reg:$rs2)>;
 
-//def : Pat<(int_riscv_intadd_s FPR64:$rs1, FPR64:$rs2),
-//          (INTADD_S FPR64:$rs1, FPR64:$rs2)>;
+multiclass PatXintArith<XintArithInstId Inst> {
+  defvar lower = !tolower(!cast<string>(Inst));
+  defvar upper = !toupper(!cast<string>(Inst));
+
+  defvar intrin_h = !cast<SDPatternOperator>("int_riscv_"#lower#"_h");
+  defvar intrin_s = !cast<SDPatternOperator>("int_riscv_"#lower#"_s");
+
+  let Predicates = [HasCustomXhintf] in
+  def _H_FPR : PatXintArithBase<intrin_h, !cast<RVInst>(upper#_H_FPR), FPR32>;
+
+  let Predicates = [HasCustomXfintf] in
+  def _S_FPR : PatXintArithBase<intrin_s, !cast<RVInst>(upper#_S_FPR), FPR64>;
+
+  let Predicates = [HasCustomXhintx] in
+  def _H_GPR : PatXintArithBase<intrin_h, !cast<RVInst>(upper#_H_GPR), FPR32INX>;
+
+  let Predicates = [HasCustomXfintx, IsRV64] in
+  def _S_GPR : PatXintArithBase<intrin_s, !cast<RVInst>(upper#_S_GPR), FPR64INX>;
+}
+
+multiclass PatXintStats<XintStatsInstId Inst> {
+  defvar lower = !tolower(!cast<string>(Inst));
+  defvar upper = !toupper(!cast<string>(Inst));
+
+  defvar intrin_h = !cast<SDPatternOperator>("int_riscv_"#lower#"_h");
+  defvar intrin_s = !cast<SDPatternOperator>("int_riscv_"#lower#"_s");
+
+  let Predicates = [HasCustomXhintf] in
+  def _H_FPR : PatXintStatsBase<intrin_h, !cast<RVInst>(upper#_H_FPR), FPR32>;
+
+  let Predicates = [HasCustomXfintf] in
+  def _S_FPR : PatXintStatsBase<intrin_s, !cast<RVInst>(upper#_S_FPR), FPR64>;
+
+  let Predicates = [HasCustomXhintx] in
+  def _H_GPR : PatXintStatsBase<intrin_h, !cast<RVInst>(upper#_H_GPR), FPR32INX>;
+
+  let Predicates = [HasCustomXfintx, IsRV64] in
+  def _S_GPR : PatXintStatsBase<intrin_s, !cast<RVInst>(upper#_S_GPR), FPR64INX>;
+}
+
+multiclass PatXintTemp<XintTempInstId Inst> {
+  defvar lower = !tolower(!cast<string>(Inst));
+  defvar upper = !toupper(!cast<string>(Inst));
+
+  defvar intrin_h = !cast<SDPatternOperator>("int_riscv_"#lower#"_h");
+  defvar intrin_s = !cast<SDPatternOperator>("int_riscv_"#lower#"_s");
+
+  let Predicates = [HasCustomXhintf] in
+  def _H_FPR : PatXintTempBase<intrin_h, !cast<RVInst>(upper#_H_FPR), FPR32>;
+
+  let Predicates = [HasCustomXfintf] in
+  def _S_FPR : PatXintTempBase<intrin_s, !cast<RVInst>(upper#_S_FPR), FPR64>;
+
+  let Predicates = [HasCustomXhintx] in
+  def _H_GPR : PatXintTempBase<intrin_h, !cast<RVInst>(upper#_H_GPR), FPR32INX>;
+
+  let Predicates = [HasCustomXfintx, IsRV64] in
+  def _S_GPR : PatXintTempBase<intrin_s, !cast<RVInst>(upper#_S_GPR), FPR64INX>;
+}
+
+defm : PatXintArith<INTADD>;
+defm : PatXintArith<INTSUB>;
+defm : PatXintArith<INTMUL>;
+defm : PatXintArith<INTDIV>;
+
+defm : PatXintStats<INTMID>;
+defm : PatXintStats<INTWDT>;
+defm : PatXintStats<INTRAD>;
+defm : PatXintStats<INTMIN>;
+defm : PatXintStats<INTMAX>;
+
+defm : PatXintTemp<INTBFR>;
+defm : PatXintTemp<INTMTS>;
+defm : PatXintTemp<INTOVR>;
+defm : PatXintTemp<INTDUR>;
+defm : PatXintTemp<INTSTR>;
+defm : PatXintTemp<INTFIN>;
+defm : PatXintTemp<INTEQL>;

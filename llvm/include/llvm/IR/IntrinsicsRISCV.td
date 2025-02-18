@@ -1924,7 +1924,7 @@ let TargetPrefix = "riscv" in {
 
   // TODO: Add "Commutative" intrinsic property (?)
   class XintTempIntrinsicBase<LLVMType ty>
-      : Intrinsic<[llvm_i1_ty],
+      : Intrinsic<[llvm_i32_ty],
                   [ty, ty],
                   [IntrNoMem, IntrWillReturn, IntrSpeculatable]>;
 
