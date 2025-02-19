@@ -1297,31 +1297,26 @@ def FeatureCustomXhintx
                      "Instructions in General-Purpose Registers)",
                      [FeatureStdExtZicsr]>;
 
+// TODO: Make the following custom predicates DENYING their register-wise
+// counterpart. Example: Xfintx should deny Xfintf (and maybe Xhintf).
+
 def HasCustomXfintf : Predicate<"Subtarget->hasCustomXfintf()">,
-                    AssemblerPredicate<(all_of FeatureCustomXfintf,
-                                       (not FeatureCustomXfintx),
-                                       (not FeatureCustomXhintx)),
+                    AssemblerPredicate<(all_of FeatureCustomXfintf),
                     "'Xfintf' (Single-Precision Interval Arithmetic "
                     "Instructions in Floating-Point Registers)">;
 
 def HasCustomXhintf : Predicate<"Subtarget->hasCustomXhintf()">,
-                    AssemblerPredicate<(all_of FeatureCustomXhintf,
-                                       (not FeatureCustomXfintx),
-                                       (not FeatureCustomXhintx)),
+                    AssemblerPredicate<(all_of FeatureCustomXhintf),
                     "'Xhintf' (Single-Precision Interval Arithmetic"
                     "Instructions in Floating-Point Registers)">;
 
 def HasCustomXfintx : Predicate<"Subtarget->hasCustomXfintx()">,
-                    AssemblerPredicate<(all_of FeatureCustomXfintx,
-                                       (not FeatureCustomXfintf),
-                                       (not FeatureCustomXhintf)),
+                    AssemblerPredicate<(all_of FeatureCustomXfintx),
                     "'Xfintx' (Single-Precision Interval Arithmetic"
                     "Instructions in General-Purpose Registers)">;
 
 def HasCustomXhintx : Predicate<"Subtarget->hasCustomXhintx()">,
-                    AssemblerPredicate<(all_of FeatureCustomXhintx,
-                                       (not FeatureCustomXfintf),
-                                       (not FeatureCustomXhintf)),
+                    AssemblerPredicate<(all_of FeatureCustomXhintx),
                     "'Xhintx' (Half-Precision Interval Arithmetic"
                     "Instructions in General-Purpose Registers)">;
 
