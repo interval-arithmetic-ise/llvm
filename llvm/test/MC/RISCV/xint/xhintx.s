@@ -12,56 +12,56 @@
 # Arithmetic instructions
 
 # CHECK-ASM-AND-OBJ: intadd.h a0, a2, a4, dyn
-# CHECK-ASM: encoding: [0x0b,0x75,0xe6,0x02]
+# CHECK-ASM: encoding: [0x0b,0x75,0xe6,0x00]
 intadd.h a0, a2, a4
 # CHECK-ASM-AND-OBJ: intsub.h a2, a4, a6, dyn
-# CHECK-ASM: encoding: [0x0b,0x76,0x07,0x0b]
+# CHECK-ASM: encoding: [0x0b,0x76,0x07,0x09]
 intsub.h a2, a4, a6
 # CHECK-ASM-AND-OBJ: intmul.h a6, a4, a0, dyn
-# CHECK-ASM: encoding: [0x0b,0x78,0xa7,0x12]
+# CHECK-ASM: encoding: [0x0b,0x78,0xa7,0x10]
 intmul.h a6, a4, a0
 # CHECK-ASM-AND-OBJ: intdiv.h a2, a6, a4, dyn
-# CHECK-ASM: encoding: [0x0b,0x76,0xe8,0x1a]
+# CHECK-ASM: encoding: [0x0b,0x76,0xe8,0x18]
 intdiv.h a2, a6, a4
 
 # Statistical instructions
 
 # CHECK-ASM-AND-OBJ: intmid.h a0, a2, dyn
-# CHECK-ASM: encoding: [0x0b,0x75,0x06,0x42]
+# CHECK-ASM: encoding: [0x0b,0x75,0x06,0x40]
 intmid.h a0, a2
 # CHECK-ASM-AND-OBJ: intwdt.h a2, a4, dyn
-# CHECK-ASM: encoding: [0x0b,0x76,0x07,0x4a]
+# CHECK-ASM: encoding: [0x0b,0x76,0x07,0x48]
 intwdt.h a2, a4
 # CHECK-ASM-AND-OBJ: intrad.h a4, a6, dyn
-# CHECK-ASM: encoding: [0x0b,0x77,0x08,0x52]
+# CHECK-ASM: encoding: [0x0b,0x77,0x08,0x50]
 intrad.h a4, a6
 # CHECK-ASM-AND-OBJ: intmin.h a6, a4, dyn
-# CHECK-ASM: encoding: [0x0b,0x78,0x07,0x5a]
+# CHECK-ASM: encoding: [0x0b,0x78,0x07,0x58]
 intmin.h a6, a4
 # CHECK-ASM-AND-OBJ: intmax.h a2, a6, dyn
-# CHECK-ASM: encoding: [0x0b,0x76,0x08,0x62]
+# CHECK-ASM: encoding: [0x0b,0x76,0x08,0x60]
 intmax.h a2, a6
 
 # Temporal logic instructions
 
 # CHECK-ASM-AND-OBJ: intbfr.h t1, t3, t5
-# CHECK-ASM: encoding: [0x0b,0x03,0xee,0x83]
+# CHECK-ASM: encoding: [0x0b,0x03,0xee,0x81]
 intbfr.h t1, t3, t5
 # CHECK-ASM-AND-OBJ: intmts.h t3, t5, t1
-# CHECK-ASM: encoding: [0x0b,0x0e,0x6f,0x8a]
+# CHECK-ASM: encoding: [0x0b,0x0e,0x6f,0x88]
 intmts.h t3, t5, t1
 # CHECK-ASM-AND-OBJ: intovr.h t1, t3, t5
-# CHECK-ASM: encoding: [0x0b,0x03,0xee,0x93]
+# CHECK-ASM: encoding: [0x0b,0x03,0xee,0x91]
 intovr.h t1, t3, t5
 # CHECK-ASM-AND-OBJ: intdur.h t3, t5, a2
-# CHECK-ASM: encoding: [0x0b,0x0e,0xcf,0x9a]
+# CHECK-ASM: encoding: [0x0b,0x0e,0xcf,0x98]
 intdur.h t3, t5, a2
 # CHECK-ASM-AND-OBJ: intstr.h a2, a4, a6
-# CHECK-ASM: encoding: [0x0b,0x06,0x07,0xa3]
+# CHECK-ASM: encoding: [0x0b,0x06,0x07,0xa1]
 intstr.h a2, a4, a6
 # CHECK-ASM-AND-OBJ: intfin.h a4, a6, a4
-# CHECK-ASM: encoding: [0x0b,0x07,0xe8,0xaa]
+# CHECK-ASM: encoding: [0x0b,0x07,0xe8,0xa8]
 intfin.h a4, a6, a4
 # CHECK-ASM-AND-OBJ: inteql.h t1, a2, a4
-# CHECK-ASM: encoding: [0x0b,0x03,0xe6,0xb2]
+# CHECK-ASM: encoding: [0x0b,0x03,0xe6,0xb0]
 inteql.h t1, a2, a4
