@@ -26,9 +26,9 @@ class XintArithInstBase<bits<5> funct5, FmtField fmt, string opcodestr,
 
 let hasSideEffects = 0, mayLoad = 0, mayStore = 0, mayRaiseFPException = 1 in
 class XintStatsInstBase<bits<5> funct5, FmtField fmt, string opcodestr,
-                             DAGOperand rty>
+                             DAGOperand rty, DAGOperand pty>
     : RVInstRFrm<!or(!shl(funct5, 2), fmt.Value), OPC_CUSTOM_0, (outs rty:$rd),
-                 (ins rty:$rs1, frmarg:$frm), !strconcat(opcodestr, fmt.Suffix),
+                 (ins pty:$rs1, frmarg:$frm), !strconcat(opcodestr, fmt.Suffix),
                  "$rd, $rs1$frm"> {
   let rs2 = 0b00000;
 }
@@ -72,19 +72,19 @@ multiclass XintStatsInst<bits<5> funct5, string opcodestr> {
   def "" : XintStatsInstId;
 
   let Predicates = [HasCustomXhintf] , DecoderNamespace = "Xhintf" in
-  def _H_FPR : XintStatsInstBase<funct5, FmtFieldH, opcodestr, FPR32>;
+  def _H_FPR : XintStatsInstBase<funct5, FmtFieldH, opcodestr, FPR16, FPR32>;
 
   let Predicates = [HasCustomXfintf] , DecoderNamespace = "Xfintf" in
-  def _S_FPR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR64>;
+  def _S_FPR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR32, FPR64>;
 
   let Predicates = [HasCustomXhintx], DecoderNamespace = "Xhintx" in
-  def _H_GPR : XintStatsInstBase<funct5, FmtFieldH, opcodestr, FPR32INX>;
+  def _H_GPR : XintStatsInstBase<funct5, FmtFieldH, opcodestr, FPR16INX, FPR32INX>;
 
   let Predicates = [HasCustomXfintx, IsRV64], DecoderNamespace = "Xfintx"  in
-  def _S_GPR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR64INX>;
+  def _S_GPR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR32INX, FPR64INX>;
 
   let Predicates = [HasCustomXfintx, IsRV32], DecoderNamespace = "XfintxPair" in
-  def _S_GPR_PAIR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR64IN32X>;
+  def _S_GPR_PAIR : XintStatsInstBase<funct5, FmtFieldS, opcodestr, FPR32INX, FPR64IN32X>;
 }
 
 multiclass XintTempInst<bits<5> funct5, string opcodestr, bit Commutable = 0> {

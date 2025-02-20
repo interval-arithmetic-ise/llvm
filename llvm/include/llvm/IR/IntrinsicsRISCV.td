@@ -1917,9 +1917,9 @@ let TargetPrefix = "riscv" in {
                   [ty, ty],
                   [IntrNoMem, IntrWillReturn, IntrSpeculatable]>;
 
-  class XintStatsIntrinsicBase<LLVMType ty>
-      : Intrinsic<[ty],
-                  [ty],
+  class XintStatsIntrinsicBase<LLVMType rty, LLVMType pty>
+      : Intrinsic<[rty],
+                  [pty],
                   [IntrNoMem, IntrWillReturn, IntrSpeculatable]>;
 
   // TODO: Add "Commutative" intrinsic property (?)
@@ -1935,8 +1935,8 @@ let TargetPrefix = "riscv" in {
   }
                                 
   multiclass XintStatsIntrinsic {
-    def "int_riscv_" # NAME # "_h" : XintStatsIntrinsicBase<llvm_float_ty>;
-    def "int_riscv_" # NAME # "_s" : XintStatsIntrinsicBase<llvm_double_ty>;
+    def "int_riscv_" # NAME # "_h" : XintStatsIntrinsicBase<llvm_half_ty, llvm_float_ty>;
+    def "int_riscv_" # NAME # "_s" : XintStatsIntrinsicBase<llvm_float_ty, llvm_double_ty>;
   }
 
   multiclass XintTempIntrinsic {
